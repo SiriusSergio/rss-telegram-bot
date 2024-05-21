@@ -1,0 +1,6 @@
+venv/
+.env
+
+.cache*
+
+.DS_Store*
