@@ -1,4 +1,4 @@
-name: Daily Super-Duper Bot
+name: rss-telegram-bot
 
 on: 
     workflow_dispatch:
@@ -8,7 +8,7 @@ env:
     TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
 
 jobs:
-    Daily-Run:
+    Get-hourly-weather:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Code
