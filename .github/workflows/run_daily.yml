@@ -1,0 +1,19 @@
+name: Daily Super-Duper Bot
+
+on: 
+    workflow_dispatch:
+
+env:
+    TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+    TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+
+jobs:
+    Daily-Run:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+            - name: Install Dependencies
+              run: pip install -r requirements.txt 
+            - name: Run App
+              run: python app.py
