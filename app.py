@@ -40,12 +40,11 @@ def get_weather():
     
     # daily_dataframe = pd.DataFrame(data = daily_data)
     # return daily_dataframe.to_string(index=None)
-    return [
-            f"Current time {current.Time()}",
-            f"Current relative_humidity_2m {current_relative_humidity_2m}",
-            f"Current apparent_temperature {current_apparent_temperature}",
-            f"Current precipitation {current_precipitation}"
-        ]
+    print(f"Current time {current.Time()}")
+    print(f"Current relative_humidity_2m {current_relative_humidity_2m}")
+    print(f"Current apparent_temperature {current_apparent_temperature}")
+    print(f"Current precipitation {current_precipitation}")
+
 
 def send_message(message):
 
