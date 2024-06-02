@@ -1,7 +1,8 @@
 name: rss-telegram-bot
 
 on: 
-    workflow_dispatch:
+    schedule:
+      - cron: '0 8 * * *'
 
 env:
     TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
