@@ -18,10 +18,9 @@ def get_weather():
 
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
-	    "latitude": 52.52,
-	    "longitude": 13.41,
-	    "hourly": "temperature_2m",
-	    "forecast_days": 1
+	    "latitude": 55.7426,
+	    "longitude": 37.7778,
+	    "daily": ["temperature_2m_max", "apparent_temperature_max", "daylight_duration", "uv_index_max", "precipitation_sum"]
     }
     responses = openmeteo.weather_api(url, params=params)
 
@@ -33,19 +32,26 @@ def get_weather():
     print(f"Timezone difference to GMT+0 {response.UtcOffsetSeconds()} s")
 
     # Process hourly data. The order of variables needs to be the same as requested.
-    hourly = response.Hourly()
-    hourly_temperature_2m = hourly.Variables(0).ValuesAsNumpy()
+    daily = response.Daily()
+    daily_temperature_2m_max = daily.Variables(0).ValuesAsNumpy()
+    daily_apparent_temperature_max = daily.Variables(1).ValuesAsNumpy()
+    daily_daylight_duration = daily.Variables(2).ValuesAsNumpy()
+    daily_uv_index_max = daily.Variables(3).ValuesAsNumpy()
+    daily_precipitation_sum = daily.Variables(4).ValuesAsNumpy()
 
-    hourly_data = {"date": pd.date_range(
-        start=pd.to_datetime(hourly.Time(), unit="s", utc=True),
-        end=pd.to_datetime(hourly.TimeEnd(), unit="s", utc=True),
-        freq=pd.Timedelta(seconds=hourly.Interval()),
-        inclusive="left"
-    )}
-    hourly_data["temperature_2m"] = hourly_temperature_2m
-
-    hourly_dataframe = pd.DataFrame(data=hourly_data)
-    return hourly_dataframe.to_string(index=None)
+    daily_data = {"date": pd.date_range(
+	start = pd.to_datetime(daily.Time(), unit = "s", utc = True),
+	end = pd.to_datetime(daily.TimeEnd(), unit = "s", utc = True),
+	freq = pd.Timedelta(seconds = daily.Interval()),
+	inclusive = "left"
+)}
+    daily_data["temperature_2m_max"] = daily_temperature_2m_max
+    daily_data["apparent_temperature_max"] = daily_apparent_temperature_max
+    daily_data["daylight_duration"] = daily_daylight_duration
+    daily_data["uv_index_max"] = daily_uv_index_max
+    daily_data["precipitation_sum"] = daily_precipitation_sum
+    daily_dataframe = pd.DataFrame(data = daily_data)
+    return daily_dataframe.to_string(index=None)
 
 def send_message(message):
 
