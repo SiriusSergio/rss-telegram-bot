@@ -20,7 +20,7 @@ def get_weather():
     params = {
 	    "latitude": 55.7426,
 	    "longitude": 37.7778,
-	    "daily": ["temperature_2m_max", "apparent_temperature_max", "daylight_duration", "uv_index_max", "precipitation_sum"]
+	    "current": ["relative_humidity_2m", "apparent_temperature", "precipitation"]
     }
     responses = openmeteo.weather_api(url, params=params)
 
@@ -41,7 +41,7 @@ def get_weather():
     # daily_dataframe = pd.DataFrame(data = daily_data)
     # return daily_dataframe.to_string(index=None)
     return [
-            f"Current time {current.get('time')}",
+            f"Current time {current.Time()}",
             f"Current relative_humidity_2m {current_relative_humidity_2m}",
             f"Current apparent_temperature {current_apparent_temperature}",
             f"Current precipitation {current_precipitation}"
