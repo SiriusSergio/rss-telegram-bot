@@ -31,27 +31,19 @@ def get_weather():
     print(f"Timezone {response.Timezone()} {response.TimezoneAbbreviation()}")
     print(f"Timezone difference to GMT+0 {response.UtcOffsetSeconds()} s")
 
-    # Process hourly data. The order of variables needs to be the same as requested.
-    daily = response.Daily()
-    daily_temperature_2m_max = daily.Variables(0).ValuesAsNumpy()
-    daily_apparent_temperature_max = daily.Variables(1).ValuesAsNumpy()
-    daily_daylight_duration = daily.Variables(2).ValuesAsNumpy()
-    daily_uv_index_max = daily.Variables(3).ValuesAsNumpy()
-    daily_precipitation_sum = daily.Variables(4).ValuesAsNumpy()
+    # Current values. The order of variables needs to be the same as requested.
+    current = response.Current()
+    current_relative_humidity_2m = current.Variables(0).Value()
+    current_apparent_temperature = current.Variables(1).Value()
+    current_precipitation = current.Variables(2).Value()
 
-    daily_data = {"date": pd.date_range(
-	start = pd.to_datetime(daily.Time(), unit = "s", utc = True),
-	end = pd.to_datetime(daily.TimeEnd(), unit = "s", utc = True),
-	freq = pd.Timedelta(seconds = daily.Interval()),
-	inclusive = "left"
-)}
-    daily_data["temperature_2m_max"] = daily_temperature_2m_max
-    daily_data["apparent_temperature_max"] = daily_apparent_temperature_max
-    daily_data["daylight_duration"] = daily_daylight_duration
-    daily_data["uv_index_max"] = daily_uv_index_max
-    daily_data["precipitation_sum"] = daily_precipitation_sum
-    daily_dataframe = pd.DataFrame(data = daily_data)
-    return daily_dataframe.to_string(index=None)
+    
+    # daily_dataframe = pd.DataFrame(data = daily_data)
+    # return daily_dataframe.to_string(index=None)
+    return (f"Current time {current.Time()}") 
+    ,(f"Current relative_humidity_2m {current_relative_humidity_2m}")
+    ,(f"Current apparent_temperature {current_apparent_temperature}")
+    ,(f"Current precipitation {current_precipitation}")
 
 def send_message(message):
 
