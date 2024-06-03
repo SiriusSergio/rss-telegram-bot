@@ -2,7 +2,7 @@ name: rss-telegram-bot
 
 on: 
     schedule:
-      - cron: '0 8 * * *'
+        - cron: '0 8 * * *'
 
 env:
     TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
