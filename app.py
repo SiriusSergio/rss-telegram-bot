@@ -37,7 +37,7 @@ def get_weather():
 # Process daily data. The order of variables needs to be the same as requested.
     current = response.Current()
     current_temperature_2m = current.Variables(0).Value()
-
+    current_temperature_2m = round(current_temperature_2m,0)
     return current_temperature_2m
 
 def send_message(message):
