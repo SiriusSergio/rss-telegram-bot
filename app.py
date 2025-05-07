@@ -8,16 +8,20 @@ import time
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler, ContextTypes
 import logging
+
+# Логирование
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Настройки браузера (чтобы не открывалось окно)
-options = Options()
+options = webdriver.ChromeOptions()
+options.binary_location = "/usr/bin/chromium"
 options.add_argument('--headless')
 options.add_argument('--disable-gpu')
 options.add_argument('--no-sandbox')
 
 # Запуск ChromeDriver
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 driver.get('https://jungler.gg/wild-rift-stats/')
 
 # Ждём, пока страница загрузится
