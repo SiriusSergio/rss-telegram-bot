@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 import time
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler, ContextTypes
+import logging
+logging.basicConfig(level=logging.INFO)
 
 # Настройки браузера (чтобы не открывалось окно)
 options = Options()
