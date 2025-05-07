@@ -24,4 +24,4 @@ COPY . .
 
 ENV CHROME_BIN=/usr/bin/chromium
 
-CMD ["python", "bot.py"]
+CMD ["python", "app.py"]
