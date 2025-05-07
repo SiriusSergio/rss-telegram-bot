@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from selenium.webdriver.chrome.service import Service
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
