@@ -12,12 +12,15 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Установка рабочей директории
+# Копирование проекта
+COPY . /app
 WORKDIR /app
-COPY . .
 
-# Переменная окружения для chromium
-ENV CHROME_BIN=/usr/bin/chromium
+# Заменяем chromedriver вручную на подходящий (v136)
+RUN curl -SL https://storage.googleapis.com/chrome-for-testing-public/136.0.7103.39/linux64/chromedriver-linux64.zip -o /tmp/chromedriver.zip \
+    && unzip /tmp/chromedriver.zip -d /tmp/ \
+    && mv /tmp/chromedriver-linux64/chromedriver /usr/bin/chromedriver \
+    && chmod +x /usr/bin/chromedriver \
+    && rm -rf /tmp/*
 
-# Запуск бота
 CMD ["python", "app.py"]
