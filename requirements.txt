@@ -1,3 +1,4 @@
+webdriver-manager
 selenium
 beautifulsoup4
 python-telegram-bot==20.7
