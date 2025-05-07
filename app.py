@@ -71,9 +71,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Запуск бота
 if name == '__main__':
-    TOKEN = os.getenv('TELEGRAM_TOKEN')
+    TOKEN = os.getenv("TOKEN")
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
     print('Бот запущен')
     app.run_polling()
+
+
+
