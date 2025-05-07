@@ -1,62 +1,79 @@
-import os
 import requests
-import openmeteo_requests
-
-import requests_cache
+from bs4 import BeautifulSoup
 import pandas as pd
-from retry_requests import retry
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from bs4 import BeautifulSoup
+import time
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler, ContextTypes
 
-from dotenv import load_dotenv
+# Настройки браузера (чтобы не открывалось окно)
+options = Options()
+options.add_argument('--headless')
+options.add_argument('--disable-gpu')
+options.add_argument('--no-sandbox')
 
-load_dotenv()
+# Запуск ChromeDriver
+driver = webdriver.Chrome(options=options)
+driver.get('https://jungler.gg/wild-rift-stats/')
 
-def get_weather():
-    cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
-    retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
-    openmeteo = openmeteo_requests.Client(session = retry_session)
+# Ждём, пока страница загрузится
+time.sleep(5)
 
-# Make sure all required weather variables are listed here
-# The order of variables in hourly or daily is important to assign them correctly below
-    url = "https://api.open-meteo.com/v1/forecast"
-    params = {
-    	"latitude": 52.52,
-    	"longitude": 13.41,
-    	"current": "temperature_2m",
-	    "timezone": "GMT",
-	    "forecast_days": 1
-    }
-    responses = openmeteo.weather_api(url, params=params)
+# Получаем HTML уже с выполненным JavaScript
+html = driver.page_source
+soup = BeautifulSoup(html, 'html.parser')
 
-# Process first location. Add a for-loop for multiple locations or weather models
-    response = responses[0]
-    print(f"Coordinates {response.Latitude()}°N {response.Longitude()}°E")
-    print(f"Elevation {response.Elevation()} m asl")
-    print(f"Timezone {response.Timezone()} {response.TimezoneAbbreviation()}")
-    print(f"Timezone difference to GMT+0 {response.UtcOffsetSeconds()} s")
+# Закрываем браузер
+driver.quit()
 
-# Process daily data. The order of variables needs to be the same as requested.
-    current = response.Current()
-    current_temperature_2m = current.Variables(0).Value()
-    current_temperature_2m = round(current_temperature_2m,0)
-    return current_temperature_2m
+# Теперь ищем данные в soup
+champion_data_top_lane = soup.find_all('tr')  #  ищем по классу
 
-def send_message(message):
-
-    TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-    TELEGRAM_CHANNEL_ID = os.getenv('TELEGRAM_CHANNEL_ID')
-
-    url = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage'
-
-    params = {
-        'chat_id' : TELEGRAM_CHANNEL_ID,
-        'text' : message
-    }
-
-    res = requests.post(url, params=params)
-    res.raise_for_status()
-    return res.json()
+print(f"Найдено строк: {len(champion_data_top_lane)}")
+for champion in champion_data_top_lane[:5]:  # выводим 5 строк для проверки
+    print(champion.text.strip())
 
 
-if __name__ == '__main__':
-    weather = get_weather()
-    send_message(weather)
+champions = []
+for champion in champion_data_top_lane:
+    if champion.find('span') == None:
+        continue
+    elif champion.find('td') == None:
+        continue
+    else: name = champion.find('span').text.strip()
+    win_rate = champion.find('td', class_='stats-table-data stats-active').text.strip()
+    champions.append({'name': name, 'win_rate': win_rate})
+
+def get_win_rate(champion_name):
+    try:
+        name = next(item for item in champions if item["name"] == champion_name).get('name')
+        win_rate = next(item for item in champions if item["name"] == champion_name).get('win_rate')
+        return f"{name}: Win Rate = {win_rate}"
+    except Exception as e:
+        return f"An error occurred: {e}"
+    return "Champion not found."
+
+# Команда /start
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [[InlineKeyboardButton(name, callback_data=name)] for name in champions]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text("Выбери чемпиона:", reply_markup=reply_markup)
+
+# Обработка нажатия на кнопку
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    champion_name = query.data
+    win_rate_info = get_win_rate(champion_name)
+    await query.edit_message_text(text=win_rate_info)
+
+# Запуск бота
+if name == '__main__':
+    TOKEN = os.getenv('TELEGRAM_TOKEN')
+    app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(button))
+    print('Бот запущен')
+    app.run_polling()
