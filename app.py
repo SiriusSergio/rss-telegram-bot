@@ -20,7 +20,7 @@ def fetch_champions():
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
     
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver = webdriver.Chrome(service=Service("/usr/bin/chromedriver"), options=options)
     driver.get('https://jungler.gg/wild-rift-stats/')
     time.sleep(5)
     html = driver.page_source
