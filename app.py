@@ -62,7 +62,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.edit_message_text(text=win_rate_info)
 
 # Запуск бота
-if name == "__main__":
+if __name__ == "__main__":
     TOKEN = os.getenv("TOKEN")
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
