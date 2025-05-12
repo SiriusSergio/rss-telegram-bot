@@ -2,6 +2,9 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from keyboards.positions import get_position_keyboard
 from parser.junglergg import fetch_champions_by_role
+import logging
+
+logger = logging.getLogger(__name__)
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Выбери позицию:", reply_markup=get_position_keyboard())
@@ -11,6 +14,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     lane = query.data
+    logger.info(f"Выбрана позиция: {lane}")
     champions = fetch_champions_by_role(lane)
 
     if not champions:
