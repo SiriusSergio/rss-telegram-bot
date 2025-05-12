@@ -1,16 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from keyboards.positions import get_position_keyboard
-
-lane_map = {
-    "lane_baron": "baron",
-    "lane_mid": "mid",
-    "lane_jungle": "jungle",
-    "lane_dragon": "dragon",
-    "lane_support": "support"
-}
-
-from parser.junglergg import fetch_champions
+from parser.junglergg import fetch_champions_by_role
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Выбери позицию:", reply_markup=get_position_keyboard())
@@ -19,12 +10,16 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    if query.data.startswith("lane_"):
-        lane = lane_map[query.data]
-        champions = fetch_champions(lane)
+    lane = query.data
+    champions = fetch_champions_by_role(lane)
 
-        message = f"Топ чемпионы для линии {lane.title()}:\n\n"
-        for champ in champions[:10]:
-            message += f"{champ['name']}: Win {champ['win_rate']}, Ban {champ['ban_rate']}\n"
+    if not champions:
+        await query.edit_message_text("Не удалось получить данные.")
+        return
 
-        await query.edit_message_text(text=message)
+    # Форматируем топ-10
+    text = f"Топ чемпионы для {lane.replace('lane_', '').capitalize()}:\n\n"
+    for champ in champions[:10]:
+        text += f"{champ['name']}: Win Rate {champ['win_rate']}, Ban Rate {champ['ban_rate']}\n"
+
+    await query.edit_message_text(text=text)
