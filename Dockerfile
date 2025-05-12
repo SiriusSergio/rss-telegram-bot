@@ -4,6 +4,7 @@ FROM python:3.11-slim
 RUN apt-get update && apt-get install -y \
     chromium \
     chromium-driver \
+    libnss3 libxss1 libasound2 \
     curl \
     unzip \
     && rm -rf /var/lib/apt/lists/*
