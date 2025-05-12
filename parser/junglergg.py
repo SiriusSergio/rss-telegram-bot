@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
+
 import time
 
 
@@ -11,12 +12,12 @@ ROLE_BUTTON_IDS = {
     "lane_baron": "topBtn",
     "lane_mid": "midBtn",
     "lane_jungle": "jungleBtn",
-    "lane_dragon": "adcBtn",
+    "lane_adc": "adcBtn",
     "lane_support": "supportBtn",
 }
 
 
-def fetch_champions_by_role(role_callback_data: str):
+def fetch_champions_by_role(role: str):
     options = webdriver.ChromeOptions()
     options.binary_location = "/usr/bin/chromium"
     options.add_argument('--headless')
@@ -26,8 +27,13 @@ def fetch_champions_by_role(role_callback_data: str):
     driver = webdriver.Chrome(service=Service("/usr/bin/chromedriver"), options=options)
     driver.get('https://jungler.gg/wild-rift-stats/')
     
-    role_btn_id = ROLE_BUTTON_IDS[role_callback_data]
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, role_btn_id))).click()
+    btn_id = ROLE_BUTTON_IDS.get(role)
+    if not btn_id:
+        driver.quit()
+        print('Не удалось спарсить')
+        return []
+
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, btn_id))).click()
 
     time.sleep(5)
     
