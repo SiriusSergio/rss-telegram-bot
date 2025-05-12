@@ -16,7 +16,7 @@ def fetch_champions(lane="all"):
     
     if lane != "all":
         driver.execute_script(f"changeLane('{lane}')")
-	time.sleep(5)
+        time.sleep(5)
 
     html = driver.page_source
     driver.quit()
