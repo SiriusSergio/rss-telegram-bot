@@ -1,7 +1,5 @@
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
-positions_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-
 def get_position_keyboard():
     keyboard = [ 
         [InlineKeyboardButton("Top", callback_data="lane_baron")],
