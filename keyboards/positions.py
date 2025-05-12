@@ -1,4 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
 positions_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 
