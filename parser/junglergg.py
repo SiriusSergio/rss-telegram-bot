@@ -34,7 +34,7 @@ def fetch_champions_by_role(role: str):
         btn_id = ROLE_TO_BUTTON_ID.get(role)
         if not btn_id:
             logger.error(f"Неизвестная роль: {role}")
-            return \[\]
+            return []
 
         # Ждём появления и скроллим к кнопке
         element = WebDriverWait(driver, 15).until(
