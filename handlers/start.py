@@ -26,7 +26,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_lines = ["🏆 <b>Чемпионы и Win Rate</b>\n"]
     text = f"Топ чемпионы для {lane.replace('lane_', '').capitalize()}:\n\n"
     for champ in champions[:10]:
-        message_lines.append(f"{champ\['name'\]}: {champ\['win_rate'\]}")
+        message_lines.append(f"{champ['name']}: {champ['win_rate']}")
 
     message = "\\n".join(message_lines)
     await query.message.reply_text(message, parse_mode="HTML")
