@@ -31,7 +31,7 @@ def fetch_champions_by_role(role: str):
     
 
     try:
-        btn_id = ROLE_TO_BUTTON_ID.get(role)
+        btn_id = ROLE_BUTTON_IDS (role)
         if not btn_id:
             logger.error(f"Неизвестная роль: {role}")
             return []
@@ -40,7 +40,7 @@ def fetch_champions_by_role(role: str):
         element = WebDriverWait(driver, 15).until(
             EC.presence_of_element_located((By.ID, btn_id))
         )
-        driver.execute_script("arguments\[0\].scrollIntoView(true);", element)
+        driver.execute_script("arguments[0].scrollIntoView(true);", element)
         time.sleep(1)
 
         WebDriverWait(driver, 10).until(
